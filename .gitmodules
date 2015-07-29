@@ -1,0 +1,4 @@
+[submodule "src/flac"]
+	path = src/flac
+	url = git@github.com:jhurt/FLACiOS.git
+	branch = ogg

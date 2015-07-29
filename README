@@ -1,6 +1,5 @@
 brew install boost qt5
 
 build against:
-./3rdparty/ios/lib
 ./3rdparty/ios/include
 ./3rdparty/ios/framework

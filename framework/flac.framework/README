@@ -1,3 +1,0 @@
-Compilation of fat binary based on https://github.com/jhurt/FLACiOS, with a few adjustments:
-1. Removed all source code but libflac from compiling.
-2. Moved the FLACiOS.a file into the framework bundle and replaced the file that was originally put there.
