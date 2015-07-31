@@ -9,11 +9,13 @@ set -e
 IOS_FLAC=src/flac
 if ! [ -d "$IOS_FLAC" ]; then
   git submodule update --init src/flac
-  cp ios-flac-project.pbxproj "$IOS_FLAC"/FLACiOS.xcodeproj/project.pbxproj
 fi
 
+rm -rf "$IOS_FLAC"/build
+cp ios-flac-project.pbxproj "$IOS_FLAC"/FLACiOS.xcodeproj/project.pbxproj
 pushd "$IOS_FLAC"
-if ! xcodebuild -alltargets -arch arm64 -arch armv7; then
+# -target Framework
+if ! xcodebuild -alltargets -arch arm64 -arch armv7 -arch armv7s; then
 	echo 'flac.framework for ios failed. Missing ogg or not using ios-flac-project.pbxproj?'
 	echo '  "brew install libogg"'
 	echo '  "ln -s /usr/local/include/ogg /opt/local/include/ogg"'
@@ -29,9 +31,17 @@ rm framework/flac.framework/FLACiOS
 rm framework-iphonesimulator/flac.framework/FLACiOS
 ln -s Versions/Current/flac framework/flac.framework/flac
 ln -s Versions/Current/flac framework-iphonesimulator/flac.framework/flac
+
 # use original
-#mv framework/flac.framework/Versions/A/{FLACiOS,flac}
-#mv framework-iphonesimulator/flac.framework/Versions/A/{FLACiOS,flac}
-# use libFLACiOS.a
-mv "$IOS_FLAC"/build/Release-iphoneos/libFLACiOS.a framework/flac.framework/Versions/A/flac
-mv "$IOS_FLAC"/build/Release-iphonesimulator/libFLACiOS.a  framework-iphonesimulator/flac.framework/Versions/A/flac
+mv framework/flac.framework/Versions/A/{FLACiOS,flac}
+mv framework-iphonesimulator/flac.framework/Versions/A/{FLACiOS,flac}
+
+# don't use original but use libFLACiOS.a instead
+# rm framework/flac.framework/Versions/A/FLACiOS
+# rm framework-iphonesimulator/flac.framework/Versions/A/FLACiOS
+#mv "$IOS_FLAC"/build/Release-iphoneos/libFLACiOS.a framework/flac.framework/Versions/A/flac
+#mv "$IOS_FLAC"/build/Release-iphonesimulator/libFLACiOS.a  framework-iphonesimulator/flac.framework/Versions/A/flac
+
+
+# The FLACiOS project doesn't build a framework that works in the simulator (missing architectures i386 and x86_64)
+rm -rf framework-iphonesimulator
